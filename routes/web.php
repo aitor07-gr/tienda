@@ -1,29 +1,66 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TiendaController;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', [TiendaController::class, 'portada']);
+Route::get('/', [TiendaController::class, 'portada'])->name('portada');
 
-Route::get('/hola', function () {
-    return 'Hola desde la Tienda';
-});
+Route::redirect('/inicio', '/');
+Route::view('/acerca', 'acerca')->name('acerca');
+Route::view('/envios', 'envios')->name('envios');
 
-Route::get('/hola-vista', function () {
-    return view('hola');
-});
+Route::get('/productos', function () {
+    $productos = [
+        1 => ['nombre' => 'Teclado', 'precio' => 25],
+        2 => ['nombre' => 'Ratón', 'precio' => 12],
+        3 => ['nombre' => 'Monitor', 'precio' => 140],
+    ];
 
-Route::get('/bienvenida/{nombre}', function (string $nombre) {
-    return view('bienvenida', ['nombre' => $nombre]);
-});
-Route::get('/lista', function () {
-    $productos = ['Teclado', 'Ratón', 'Monitor'];
-    return view('lista', ['productos' => $productos]);
-});
+    return view('productos', ['productos' => $productos]);
+})->name('productos');
+
+Route::get('/producto/{id}', function (string $id) {
+    $productos = [
+        1 => ['nombre' => 'Teclado', 'precio' => 25],
+        2 => ['nombre' => 'Ratón', 'precio' => 12],
+        3 => ['nombre' => 'Monitor', 'precio' => 140],
+    ];
+
+    if (!isset($productos[$id])) {
+        abort(404);
+    }
+
+    return view('producto', ['producto' => $productos[$id]]);
+})->whereNumber('id')->name('producto');
+
+Route::get('/clientes', function () {
+    return 'Listado de clientes';
+})->name('clientes');
+
 Route::get('/contacto', function () {
     return view('contacto');
-});
-use App\Http\Controllers\HorarioController;
+})->name('contacto');
 
-Route::get('/horario', [HorarioController::class, 'index']);
-Route::get('/producto/{numero}', [TiendaController::class, 'producto']);
+Route::post('/contacto', function () {
+    return 'Mensaje recibido';
+})->name('contacto.enviar');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', function () {
+        return 'Panel de administración';
+    })->name('panel');
+
+    Route::get('/productos', function () {
+        return 'Administrar productos';
+    })->name('productos');
+});
+Route::get('/productos/pagina/{numero?}', function (string $numero = '1') {
+    return view('pagina', ['numero' => $numero]);
+})->whereNumber('numero')->name('productos.pagina');
+
+Route::fallback(function () {
+    return 'Esa página no existe en la Tienda';
+});
+Route::get('/categoria/{tipo}', function (string $tipo) {
+    return view('categoria', ['tipo' => $tipo]);
+})->whereIn('tipo', ['teclados', 'ratones', 'monitores'])->name('categoria');

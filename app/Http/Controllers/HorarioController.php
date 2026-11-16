@@ -16,3 +16,4 @@ class HorarioController extends Controller
         return view('horario', ['horario' => $horario]);
     }
 }
+

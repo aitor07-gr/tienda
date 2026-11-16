@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Ficha de producto</title>
-</head>
-<body>
-
-    @if (isset($productos[$numero]))
-        <h1>{{ $productos[$numero]['nombre'] }}</h1>
-        <p>Precio: {{ $productos[$numero]['precio'] }} €</p>
-    @else
-        <p>Producto no encontrado</p>
-    @endif
-
-</body>
-</html>
+<nav>
+    <a href="{{ route('portada') }}">Inicio</a> |
+    <a href="{{ route('productos') }}">Productos</a> |
+    <a href="{{ route('clientes') }}">Clientes</a> |
+    <a href="{{ route('contacto') }}">Contacto</a> |
+    <a href="{{ route('acerca') }}">Acerca de</a> |
+    <a href="{{ route('envios') }}">Envíos</a>
+</nav>
+<h1>Productos</h1>
+<ul>
+    @foreach ($productos as $id => $producto)
+        <li>
+            <a href="{{ route('producto', ['id' => $id]) }}">{{ $producto['nombre'] }}</a>
+            — {{ $producto['precio'] }} €
+        </li>
+    @endforeach
+</ul>
